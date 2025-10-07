@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarHawks Squadron | Top Gun Style</title>
+    <style>
+        /* СБРОС СТИЛЕЙ И БАЗОВЫЕ НАСТРОЙКИ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f2b 0%, #1a2a4a 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* СТИЛИ HUD (HEAD-UP DISPLAY) */
+        .hud-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 50, 50, 0.1) 0%, transparent 50%);
+        }
+
+        /* ШАПКА САЙТА */
+        header {
+            background: rgba(10, 15, 43, 0.95);
+            border-bottom: 2px solid #00f0ff;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-text {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #00f0ff, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .logo-subtitle {
+            font-size: 0.9rem;
+            color: #00f0ff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+        }
+
+        nav a:hover {
+            color: #00f0ff;
+            border: 1px solid #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        /* ГЛАВНЫЙ ЭКРАН */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(rgba(10, 15, 43, 0.8), rgba(10, 15, 43, 0.9)), url('https://images.unsplash.com/photo-1508610048659-a06b669e3321?ixlib=rb-4.0.3') center/cover;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00f0ff, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+        }
+
+        .hero .motto {
+            font-size: 1.5rem;
+            color: #00f0ff;
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* СЕКЦИИ */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #00f0ff;
+            margin-bottom: 3rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #00f0ff, #ff0080);
+        }
+
+        /* О НАС */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .about-highlights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .highlight {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 5px;
+        }
+
+        .highlight h3 {
+            color: #00f0ff;
+            margin-bottom: 0.5rem;
+        }
+
+        /* КАК ВСТУПИТЬ */
+        .join-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .step {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            border-color: #00f0ff;
+        }
+
+        .step-number {
+            background: linear-gradient(45deg, #00f0ff, #ff0080);
+            color: #0a0f2b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
+
+        /* ГАЛЕРЕЯ */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            border-radius: 5px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* ТИК-ТОК */
+        .tiktok-section {
+            text-align: center;
+            background: rgba(0, 240, 255, 0.05);
+            padding: 3rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .tiktok-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #00f0ff, #ff0080);
+            color: #0a0f2b;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 5px;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tiktok-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+        }
+
+        /* ПОДВАЛ */
+        footer {
+            background: rgba(10, 15, 43, 0.95);
+            border-top: 2px solid #00f0ff;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .about-highlights {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HUD ЭФФЕКТ -->
+    <div class="hud-overlay"></div>
+
+    <!-- ШАПКА -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div>
+                    <div class="logo-text">WARHAWKS</div>
+                    <div class="logo-subtitle">Virtual Squadron</div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">О Нас</a></li>
+                    <li><a href="#join">Вступить</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#tiktok">TikTok</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>WARHAWKS</h1>
+            <div class="motto">HUNT AS ONE</div>
+            <p>Виртуальная пилотажная группа | PTFS | Saab Gripen</p>
+        </div>
+    </section>
+
+    <!-- О НАС -->
+    <section id="about" class="section">
+        <h2 class="section-title">О Нас</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>WarHawks — это элитная виртуальная пилотажная группа, базирующаяся в Al Najaf. Мы объединяем лучших пилотов PTFS, чтобы демонстрировать высочайший уровень мастерства, дисциплины и командной работы.</p>
+                
+                <p>Наша философия проста: точность, агрессия, единство. Каждый полет — это симфония скоординированных движений, где нет места ошибкам.</p>
+
+                <div class="about-highlights">
+                    <div class="highlight">
+                        <h3>База</h3>
+                        <p>Al Najaf Airport</p>
+                    </div>
+                    <div class="highlight">
+                        <h3>Самолёт</h3>
+                        <p>Saab Gripen</p>
+                    </div>
+                    <div class="highlight">
+                        <h3>Девиз</h3>
+                        <p>Hunt As One</p>
+                    </div>
+                    <div class="highlight">
+                        <h3>Стиль</h3>
+                        <p>Top Gun</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- КАК ВСТУПИТЬ -->
+    <section id="join" class="section">
+        <h2 class="section-title">Как Вступить</h2>
+        <div class="join-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Найди Нас</h3>
+                <p>Перейди в наш Telegram-чат и представься по форме</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Пройди Отбор</h3>
+                <p>Покажи свои навыки в пробном полете с нашими пилотами</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Стань Ястребом</h3>
+                <p>Пройти базовую подготовку и получи позывной "Hawk"</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Летай в Строю</h3>
+                <p>Участвуй в тренировках и показательных выступлениях</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ГАЛЕРЕЯ -->
+    <section id="gallery" class="section">
+        <h2 class="section-title">Галерея War Hawks</h2>
+        <div class="gallery">
+            <!-- Замените src на ваши реальные изображения -->
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3" alt="WarHawks Formation">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1580375600903-9bd4877888d1?ixlib=rb-4.0.3" alt="Gripen in Action">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1562976544-0a43ea145ebb?ixlib=rb-4.0.3" alt="Squadron Patch">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1541753236783-848d46d12c6f?ixlib=rb-4.0.3" alt="Flight Training">
+            </div>
+        </div>
+    </section>
+
+    <!-- ТИК-ТОК -->
+    <section id="tiktok" class="section">
+        <h2 class="section-title">Наш TikTok</h2>
+        <div class="tiktok-section">
+            <p>Следите за нашими полетами и эксклюзивными видео в TikTok!</p>
+            <a href="https://tiktok.com/@your_warhawks" class="tiktok-link" target="_blank">Подписаться в TikTok</a>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 WarHawks Virtual Squadron. Все права защищены.</p>
+            <p>Hunt As One | PTFS | Al Najaf Base</p>
+        </div>
+    </footer>
+
+    <script>
+        // Плавная прокрутка для навигации
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Динамический HUD-эффект
+        document.addEventListener('mousemove', (e) => {
+            const hud = document.querySelector('.hud-overlay');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            hud.style.background = `
+                radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at ${100 - x * 100}% ${100 - y * 100}%, rgba(255, 50, 50, 0.1) 0%, transparent 50%)
+            `;
+        });
+    </script>
+</body>
+</html> <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarHawks Squadron | Top Gun Style</title>
+    <style>
+        /* СБРОС СТИЛЕЙ И БАЗОВЫЕ НАСТРОЙКИ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f2b 0%, #1a2a4a 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* СТИЛИ HUD (HEAD-UP DISPLAY) */
+        .hud-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 50, 50, 0.1) 0%, transparent 50%);
+        }
+
+        /* ШАПКА САЙТА */
+        header {
+            background: rgba(10, 15, 43, 0.95);
+            border-bottom: 2px solid #00f0ff;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-text {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #00f0ff, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .logo-subtitle {
+            font-size: 0.9rem;
+            color: #00f0ff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+        }
+
+        nav a:hover {
+            color: #00f0ff;
+            border: 1px solid #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        /* ГЛАВНЫЙ ЭКРАН */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(rgba(10, 15, 43, 0.8), rgba(10, 15, 43, 0.9)), url('https://images.unsplash.com/photo-1508610048659-a06b669e3321?ixlib=rb-4.0.3') center/cover;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00f0ff, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+        }
+
+        .hero .motto {
+            font-size: 1.5rem;
+            color: #00f0ff;
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* СЕКЦИИ */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #00f0ff;
+            margin-bottom: 3rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #00f0ff, #ff0080);
+        }
+
+        /* О НАС */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .about-highlights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .highlight {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 5px;
+        }
+
+        .highlight h3 {
+            color: #00f0ff;
+            margin-bottom: 0.5rem;
+        }
+
+        /* КАК ВСТУПИТЬ */
+        .join-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .step {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            border-color: #00f0ff;
+        }
+
+        .step-number {
+            background: linear-gradient(45deg, #00f0ff, #ff0080);
+            color: #0a0f2b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
+
+        /* ГАЛЕРЕЯ */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            border-radius: 5px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* ТИК-ТОК */
+        .tiktok-section {
+            text-align: center;
+            background: rgba(0, 240, 255, 0.05);
+            padding: 3rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .tiktok-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #00f0ff, #ff0080);
+            color: #0a0f2b;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 5px;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tiktok-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+        }
+
+        /* ПОДВАЛ */
+        footer {
+            background: rgba(10, 15, 43, 0.95);
+            border-top: 2px solid #00f0ff;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .about-highlights {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HUD ЭФФЕКТ -->
+    <div class="hud-overlay"></div>
+
+    <!-- ШАПКА -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div>
+                    <div class="logo-text">WARHAWKS</div>
+                    <div class="logo-subtitle">Virtual Squadron</div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">О Нас</a></li>
+                    <li><a href="#join">Вступить</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#tiktok">TikTok</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>WARHAWKS</h1>
+            <div class="motto">HUNT AS ONE</div>
+            <p>Виртуальная пилотажная группа | PTFS | Saab Gripen</p>
+        </div>
+    </section>
+
+    <!-- О НАС -->
+    <section id="about" class="section">
+        <h2 class="section-title">О Нас</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>WarHawks — это элитная виртуальная пилотажная группа, базирующаяся в Al Najaf. Мы объединяем лучших пилотов PTFS, чтобы демонстрировать высочайший уровень мастерства, дисциплины и командной работы.</p>
+                
+                <p>Наша философия проста: точность, агрессия, единство. Каждый полет — это симфония скоординированных движений, где нет места ошибкам.</p>
+
+                <div class="about-highlights">
+                    <div class="highlight">
+                        <h3>База</h3>
+                        <p>Al Najaf Airport</p>
+                    </div>
+                    <div class="highlight">
+                        <h3>Самолёт</h3>
+                        <p>Saab Gripen</p>
+                    </div>
+                    <div class="highlight">
+                        <h3>Девиз</h3>
+                        <p>Hunt As One</p>
+                    </div>
+                    <div class="highlight">
+                        <h3>Стиль</h3>
+                        <p>Top Gun</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- КАК ВСТУПИТЬ -->
+    <section id="join" class="section">
+        <h2 class="section-title">Как Вступить</h2>
+        <div class="join-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Найди Нас</h3>
+                <p>Перейди в наш Telegram-чат и представься по форме</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Пройди Отбор</h3>
+                <p>Покажи свои навыки в пробном полете с нашими пилотами</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Стань Ястребом</h3>
+                <p>Пройти базовую подготовку и получи позывной "Hawk"</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Летай в Строю</h3>
+                <p>Участвуй в тренировках и показательных выступлениях</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ГАЛЕРЕЯ -->
+    <section id="gallery" class="section">
+        <h2 class="section-title">Галерея War Hawks</h2>
+        <div class="gallery">
+            <!-- Замените src на ваши реальные изображения -->
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3" alt="WarHawks Formation">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1580375600903-9bd4877888d1?ixlib=rb-4.0.3" alt="Gripen in Action">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1562976544-0a43ea145ebb?ixlib=rb-4.0.3" alt="Squadron Patch">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1541753236783-848d46d12c6f?ixlib=rb-4.0.3" alt="Flight Training">
+            </div>
+        </div>
+    </section>
+
+    <!-- ТИК-ТОК -->
+    <section id="tiktok" class="section">
+        <h2 class="section-title">Наш TikTok</h2>
+        <div class="tiktok-section">
+            <p>Следите за нашими полетами и эксклюзивными видео в TikTok!</p>
+            <a href="https://tiktok.com/@your_warhawks" class="tiktok-link" target="_blank">Подписаться в TikTok</a>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 WarHawks Virtual Squadron. Все права защищены.</p>
+            <p>Hunt As One | PTFS | Al Najaf Base</p>
+        </div>
+    </footer>
+
+    <script>
+        // Плавная прокрутка для навигации
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Динамический HUD-эффект
+        document.addEventListener('mousemove', (e) => {
+            const hud = document.querySelector('.hud-overlay');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            hud.style.background = `
+                radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at ${100 - x * 100}% ${100 - y * 100}%, rgba(255, 50, 50, 0.1) 0%, transparent 50%)
+            `;
+        });
+    </script>
+</body>
+</html>
